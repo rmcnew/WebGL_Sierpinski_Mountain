@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!-- 
+    Richard McNew
+    CS 5400
+    Assignment 02:  Sierpinski Mountain
+-->
+<html>
+	<head>
+		<title>Sierpinski Mountain</title>
+
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            attribute vec3 vPosition;
+            uniform float theta;
+            varying vec4 v_color;
+
+            void main()
+            {
+                float angle = radians( theta );
+                float c = cos( angle );
+                float s = sin( angle );
+
+                mat4 rz = mat4(  c,  0.0,  -s, 0.0,
+                                0.0, 1.0, 0.0, 0.0,
+                                 s,  0.0,  c,  0.0,
+                                0.0, 0.0, 0.0, 1.0 );
+
+                gl_PointSize = 1.0;
+                gl_Position = rz * vec4(vPosition, 1.0);
+                v_color = vec4(vPosition.z * 0.5 + 0.5 + 0.5 * vPosition.x, vPosition.z * 0.5 + 0.5 * vPosition.y + 0.5, vPosition.z * 0.5 + 0.5, 1.0);
+
+            }
+        </script>
+
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            precision mediump float;
+            varying vec4 v_color;
+
+            void main()
+            {
+                gl_FragColor = v_color;
+            }
+        </script>
+		<script id="webgl-utils"  type="text/javascript" src="webgl-utils.js"></script>
+		<script id="initShaders"  type="text/javascript" src="initShaders.js"></script>
+		<script id="MV"           type="text/javascript" src="MV.js"></script>
+		<script id="mountain"     type="text/javascript" src="mountain.js"></script>
+	</head>
+	<body>
+		<canvas id="gl-canvas" width="512" height="512">
+			Oops ... your browser doesn't support the HTML5 canvas element
+		</canvas>
+        <div>
+            <label for="zSlider">Z</label>
+            <input id="zSlider" type="range" min="0" max="360" step="5" value="0" 
+                   oninput="iterationUpdate()" onchange="iterationUpdate()">
+            </input>
+        </div>
+        <div>
+            <label for="iterationTextBox">Iteration:</label>
+            <input id="iterationTextBox" type="number" min="0" max="10" value="0" 
+                   oninput="iterationUpdate()" onchange="iterationUpdate()">
+            </input>
+        </div>
+	</body>
+</html>
